@@ -1,0 +1,9 @@
+@import './base.css';
+
+#app {
+  margin: 0 auto;
+  font-weight: normal;
+  background: url("../assets/background.png") no-repeat fixed top;
+  background-size: cover;
+  height: 100vh;
+}
