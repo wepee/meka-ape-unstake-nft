@@ -29,6 +29,7 @@ onMounted(async () => {
     ethereum.on("accountsChanged", (accounts: string | any[]) => {
       if (accounts.length === 0) {
         console.log("Please connect to MetaMask.");
+        currentAccount.value = undefined;
       } else if (accounts[0] !== currentAccount.value) {
         currentAccount.value = accounts[0];
         console.log("Account changed");
@@ -43,7 +44,7 @@ onMounted(async () => {
 
 // Check if Ethereum is available
 const checkEthereum = async () => {
-  const { ethereum } = window;
+  const {ethereum} = window;
 
   if (!ethereum) {
     alert("Get MetaMask!");
@@ -120,14 +121,18 @@ const unstake = async () => {
 
   <main>
     <h1>Unstake your NFTs</h1>
-    <p>Unstake your NFTs to get your original NFT back</p>
+
+    <p class="subtitle">Unstake your NFTs to get your original NFTs back</p>
+
+    <div class="container">
+      <p v-if="!currentAccount">Connect your wallet to see your staked NFTs</p>
+      <p v-if="stakedNfts.length">You have staked the following NFTs:</p>
+      <p v-else-if="currentAccount">No staked Nft with this address</p>
+      <span v-for="nft in stakedNfts" :key="nft">{{ `${nft} ` }}</span>
+      <button v-if="!isLoading && stakedNfts.length || !currentAccount" @click="buttonClick">{{ buttonLabel }}</button>
+    </div>
 
 
-    <p v-if="stakedNfts.length">You staked the following NFTs:</p>
-    <p v-else>No staked Nft with this address</p>
-    <span v-for="nft in stakedNfts" :key="nft">{{ `${nft} ` }}</span>
-
-    <button v-if="!isLoading && stakedNfts.length" @click="buttonClick">{{ buttonLabel }}</button>
   </main>
 
   <img alt="meka ape monkey" class="logo" src="./assets/meka_ape_monkey.png"/>
@@ -135,10 +140,12 @@ const unstake = async () => {
 
 <style scoped>
 .logo {
-  height: 80vh;
+  max-height: 80vh;
   position: absolute;
   bottom: 0;
   z-index: 0;
+
+  max-width: 100vw;
 }
 
 main {
@@ -168,7 +175,7 @@ button {
   font-size: 1.2rem;
   font-weight: 700;
   cursor: pointer;
-  z-index: 1;
+  z-index: 2;
 }
 
 button:hover {
@@ -178,5 +185,37 @@ button:hover {
 button:active {
   transition: all 0.1s ease-in-out;
   transform: scale(0.95);
+}
+
+p {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin: 0;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  background-color: rgba(5, 5, 5, 0.2);
+  width: 500px;
+  max-width: 90vw;
+  padding: 20px;
+  border-radius: 10px;
+  z-index: 1;
+}
+
+.container p {
+  font-weight: 900;
+  font-size: 1.2rem;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-align: center;
 }
 </style>
