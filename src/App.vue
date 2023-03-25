@@ -50,8 +50,6 @@ const checkEthereum = async () => {
     alert("Get MetaMask!");
     window.open("https://metamask.io/download.html", "_blank");
     throw new Error("Ethereum not found");
-  } else {
-    console.log("We have the ethereum object", ethereum);
   }
 
   return ethereum;
@@ -97,8 +95,8 @@ const fetchStakedNfts = async () => {
   if (stakingContract) {
     const stakedNfts = await stakingContract.tokensStakedByOwner(currentAccount.value);
 
-    console.log("stakedNfts", stakedNfts);
-    return stakedNfts;
+
+    return stakedNfts.length ? stakedNfts.map((tokenId: bigint) => Number(tokenId)) : [];
   }
 
   return [];
@@ -106,10 +104,10 @@ const fetchStakedNfts = async () => {
 
 const unstake = async () => {
   try {
-    await stakingContract?.unstake(stakedNfts.value)
+    await stakingContract?.unstake(Array.from(stakedNfts.value))
     window.location.reload()
   } catch (error: any) {
-    alert(error?.revert.args[0] || error.message || 'Something went wrong')
+    alert(error?.revert?.args[0] || error.message || 'Something went wrong')
   }
 }
 
